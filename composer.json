@@ -1,0 +1,38 @@
+
+{
+    "name": "3ev/tev_mailchimp",
+    "description": "Mailchimp integration for your TYPO3 site",
+    "type": "typo3-cms-extension",
+    "homepage": "https://github.com/3ev/tev_mailchimp",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "3ev",
+            "homepage": "http://www.3ev.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Ben Constable",
+            "email": "benconstable@3ev.com",
+            "homepage": "http://github.com/BenConstable",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "3ev/typo3-utils": "dev-master",
+        "danielstjules/stringy": "~1.10",
+        "pacely/mailchimp-apiv3": "~1.0",
+        "nesbot/Carbon": "~1.20"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tev\\TevMailchimp\\": "Classes/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}

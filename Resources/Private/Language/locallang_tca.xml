@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+    <meta type="array">
+        <type>database</type>
+        <description>Language labels for database tables/fields belonging to extension 'tev_mailchimp'</description>
+    </meta>
+
+    <data type="array">
+        <languageKey index="default" type="array">
+            <label index="tx_tevmailchimp_domain_model_mlist">Mailchimp Lists</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.name">Name</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.description">Description</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.mc_list_id">Mailchimp List ID</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.mc_created_at">Time created in Mailchimp</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.fe_users">Subscribers</label>
+        </languageKey>
+    </data>
+</T3locallang>

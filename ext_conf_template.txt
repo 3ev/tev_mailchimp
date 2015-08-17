@@ -1,0 +1,8 @@
+# cat=basic; type=string; label=Mailchimp API Key
+mc_api_key =
+
+# cat=basic; type=string; label=FE User email field (email or username)
+fe_user_email_field = email
+
+# cat=basic; type=string; label=Logfile path, relative to TYPO3 base dir (leave blank for default 'typo3temp/logs/mailchimp.log')
+logfile_path =
