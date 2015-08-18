@@ -4,15 +4,16 @@
 
 > Integrate Mailchimp newsletter subscriptions with your TYPO3 site.
 
-## Contents
+##Contents
 
 * [Overview](#overview)
 * [Installation](#installation)
-* [Configuration](#setup-and-configuration)
+* [Setup and Configuration](#setup-and-configuration)
     * [Webhooks](#webhooks)
-    * [Changing the email field](#changing-the-email-field)
-    * [Changing the logfile path](#changing-the-logfile-path)
+    * [Changing the Email Field](#changing-the-email-field)
+    * [Changing the Logfile Path](#changing-the-logfile-path)
 * [Usage](#usage)
+    * [Downloading Lists](#downloading-lists)
     * [Logging](#logging)
 * [License](#license)
 
@@ -72,7 +73,7 @@ to listen to
 
 Then just clear your TYPO3 caches, and you'll be ready to go.
 
-###Changing the email field
+###Changing the Email Field
 
 By default, the extension uses the `email` field on FE Users to sync email
 preferences. You can change this by setting the 'FE User email field' in the
@@ -80,7 +81,7 @@ extension configuration. This should be the lower cased, underscored field name
 as it is in the database. You may want to do this if, for example, your users
 use an email address as their `username`, and you don't use the `email field.
 
-###Changing the logfile path
+###Changing the Logfile Path
 
 By default, extension logs will be written to `typo3temp/logs/mailchimp.log`. If
 you'd like to change this, simply set the 'Logfile path' in the extension
@@ -95,7 +96,66 @@ and setting your own logging config in an `ext_localconf.php` under the
 
 ##Usage
 
-TODO
+###Downloading lists
+
+Firstly, you should download all Lists from your Mailchimp account to TYPO3. You
+can do this by running the following Extbase CLI command in your TYPO3 installation
+directory (you'll need to create the `cli_lowlevel` BE User if you haven't already):
+
+```
+$ ./cli_dispatch.phpsh extbase mailchimp:lists
+```
+
+Once this has been run, you'll be able to see all of the downloaded lists using
+the List View on the Storage Folder you configured earlier. You can optionally
+set a custom description on each List, and you'll also be able to see the full
+list of FE Users subscribed to the list under the Subscribers tab.
+
+**Note:** If you're changing lists regularly in your Mailchimp account, you should
+put this command on a cronjob or TYPO3 Scheduler task.
+
+###Using the MailchimpService
+
+You can easily trigger subscriptions or unsubscriptions for users in your Extbase
+code by injecting the `Tev\TevMailchimp\Services\MailchimpService` into your own
+classes.
+
+The service provides the following methods for managing subscriptions:
+
+**subscribeUserToList(FrontendUser $user, Mlist $list)**
+
+Subscribe the given FE User to the given Mailchimp list.
+
+**unsubscribeUserFromList(FrontendUser $user, Mlist $list)**
+
+Unsubscribe the given FE User from the given Mailchimp list.
+
+**subscribeToList($email, $list)**
+
+Subscribe the given email address to the given Mailchimp list.
+
+**unsubscribeFromList($email, $list)**
+
+Unsubscribe the given email address from the given Mailchimp list.
+
+Each of these methods will trigger an exception if there is a Mailchimp API error,
+so you should ensure you handle them appropriately.
+
+**Note:** None of these methods will update the local database. You'll need to
+configure [webhooks](#webhooks) to ensure the local database is updated once the user confirms
+their subscription change.
+
+###Using the MlistRepository
+
+The `Tev\TevMailchimp\Domain\Repository\MlistRepository` class allows you to fetch
+list data from the local database. It provides the standard Extbase repository
+API. Some of the most common methods you'll likely want to use are:
+
+**findAll()**
+
+Get all lists from the local database.
+
+TODO (more methods)
 
 ###Logging
 
@@ -105,7 +165,7 @@ The following events are logged in the system:
 * Successful and failed list downloads via the CLI
 * Any Mailchimp API errors
 
-See [above](#changing the logfile path) for information on changing the logging
+See [above](#changing-the-logfile-path) for information on changing the logging
 setup.
 
 ##License
