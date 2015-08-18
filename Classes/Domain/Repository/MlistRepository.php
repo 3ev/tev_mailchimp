@@ -1,6 +1,7 @@
 <?php
 namespace Tev\TevMailchimp\Domain\Repository;
 
+use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -78,5 +79,35 @@ class MlistRepository extends Repository
         foreach ($q->execute() as $toRemove) {
             $this->remove($toRemove);
         }
+    }
+
+    /**
+     * Find all of the lists subscribed to by the given user.
+     *
+     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser        $user
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     */
+    public function findAllSubscribedToBy(FrontendUser $user)
+    {
+        $q = $this->createQuery();
+
+        $q->matching($q->in('feUsers.uid', [$user->getUid()]));
+
+        return $q->execute();
+    }
+
+    /**
+     * Find all of the lists not subscribed to by the given user.
+     *
+     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser        $user
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     */
+    public function findAllNotSubscribedToBy(FrontendUser $user)
+    {
+        $q = $this->createQuery();
+
+        $q->matching($q->logicalNot($q->in('feUsers.uid', [$user->getUid()])));
+
+        return $q->execute();
     }
 }

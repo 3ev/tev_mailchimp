@@ -157,6 +157,14 @@ API. Some of the most common methods you'll likely want to use are:
 
 > Get all lists from the local database.
 
+**findAllSubscribedToBy(FrontendUser $user)**
+
+> Get all lists subscribed to by the given user.
+
+**findAllNotSubscribedToBy(FrontendUser $user)**
+
+> Get all lists not subscribed to by the given user.
+
 TODO (more methods)
 
 ###Logging
