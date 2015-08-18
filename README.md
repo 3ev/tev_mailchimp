@@ -165,8 +165,6 @@ API. Some of the most common methods you'll likely want to use are:
 
 > Get all lists not subscribed to by the given user.
 
-TODO (more methods)
-
 ###Logging
 
 The following events are logged in the system:
