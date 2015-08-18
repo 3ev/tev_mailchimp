@@ -54,7 +54,7 @@ class FeUserSlot extends EntitySlot
      */
     protected function updated(FrontendUser $user)
     {
-        if ($user->_isDirty($this->emailUtil->getFieldNameCamel())) {
+        if ($this->isDirty($user, $this->emailUtil->getFieldNameCamel())) {
             $this->mailchimp->downloadSubscriptions($user);
         }
     }
