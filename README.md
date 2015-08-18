@@ -44,6 +44,15 @@ in your code
 $ composer require "3ev/tev_mailchimp"
 ```
 
+###Dependencies
+
+Due to a [TYPO3 bug](https://forge.typo3.org/issues/54491) dependencies cannot
+be added to this project's `composer.json`. Instead, you must add them to your
+root `composer.json` file.
+
+Please see the `suggests` config in this package's `composer.json` for the
+dependencies you'll need to add.
+
 ##Setup and Configuration
 
 Install the extension via the Extension Manager as normal. After the extension
