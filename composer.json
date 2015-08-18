@@ -23,7 +23,7 @@
         "3ev/typo3-utils": "dev-master",
         "danielstjules/stringy": "~1.10",
         "pacely/mailchimp-apiv3": "~1.0",
-        "nesbot/Carbon": "~1.20"
+        "nesbot/carbon": "~1.20"
     },
     "autoload": {
         "psr-4": {
