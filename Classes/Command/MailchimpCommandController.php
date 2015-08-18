@@ -2,6 +2,7 @@
 namespace Tev\TevMailchimp\Command;
 
 use Exception;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Tev\TevMailchimp\Services\Mailchimp;
@@ -20,6 +21,22 @@ class MailchimpCommandController extends CommandController
     protected $mailchimpService;
 
     /**
+     * Logger instance.
+     *
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     * @param  \TYPO3\CMS\Core\Log\LogManager $logManager
+     * @return void
+     */
+    public function injectLogManager(LogManager $logManager)
+    {
+        $this->logger = $logManager->getLogger(__CLASS__);
+    }
+
+    /**
      * Download all lists from Mailchimp.
      *
      * @return void
@@ -36,8 +53,14 @@ class MailchimpCommandController extends CommandController
             }
 
             $this->outputLine('<info>complete</info>');
+
+            $this->logger->info('Lists downloaded successfully via CLI');
         } catch (Exception $e) {
             $this->outputLine("<error>Error: {$e->getMessage()}</error>");
+
+            $this->logger->error('Lists failed to download via CLI', [
+                'message' => $e->getMessage()
+            ]);
         }
     }
 }
