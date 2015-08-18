@@ -124,19 +124,19 @@ The service provides the following methods for managing subscriptions:
 
 **subscribeUserToList(FrontendUser $user, Mlist $list)**
 
-Subscribe the given FE User to the given Mailchimp list.
+> Subscribe the given FE User to the given Mailchimp list.
 
 **unsubscribeUserFromList(FrontendUser $user, Mlist $list)**
 
-Unsubscribe the given FE User from the given Mailchimp list.
+> Unsubscribe the given FE User from the given Mailchimp list.
 
 **subscribeToList($email, $list)**
 
-Subscribe the given email address to the given Mailchimp list.
+> Subscribe the given email address to the given Mailchimp list.
 
 **unsubscribeFromList($email, $list)**
 
-Unsubscribe the given email address from the given Mailchimp list.
+> Unsubscribe the given email address from the given Mailchimp list.
 
 Each of these methods will trigger an exception if there is a Mailchimp API error,
 so you should ensure you handle them appropriately.
@@ -153,7 +153,7 @@ API. Some of the most common methods you'll likely want to use are:
 
 **findAll()**
 
-Get all lists from the local database.
+> Get all lists from the local database.
 
 TODO (more methods)
 
