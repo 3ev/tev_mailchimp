@@ -3,7 +3,6 @@ namespace Tev\TevMailchimp\Slots;
 
 use Tev\Typo3Utils\Slots\EntitySlot;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
-use Stringy\Stringy as S;
 
 /**
  * Slot for handling FE User signals.

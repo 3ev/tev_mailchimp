@@ -46,7 +46,7 @@ class EmailField implements SingletonInterface
      */
     public function getFieldNameCamel()
     {
-        return S::create($this->fieldName)->camelize();
+        return (string) S::create($this->fieldName)->camelize();
     }
 
     /**
@@ -56,6 +56,6 @@ class EmailField implements SingletonInterface
      */
     public function getFieldNameUpperCamel()
     {
-        return S::create($this->fieldName)->upperCamelize();
+        return (string) S::create($this->fieldName)->upperCamelize();
     }
 }
