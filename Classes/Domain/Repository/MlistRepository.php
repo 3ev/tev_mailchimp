@@ -1,6 +1,7 @@
 <?php
 namespace Tev\TevMailchimp\Domain\Repository;
 
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use Tev\TevMailchimp\Domain\Model\Mlist;
@@ -11,6 +12,14 @@ use Tev\TevMailchimp\Domain\Model\Mlist;
 class MlistRepository extends Repository
 {
     /**
+     * Configuration manager.
+     *
+     * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+     * @inject
+     */
+    protected $cm;
+
+    /**
      * {@inheritdoc}
      */
     public function initializeObject()
@@ -18,6 +27,18 @@ class MlistRepository extends Repository
         $this->defaultOrderings = [
             'name' => QueryInterface::ORDER_ASCENDING
         ];
+
+        // Ensure correct storage PID is used, regardless of what plugin the
+        // repository is injected into
+
+        $config = $this->cm->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'tevmailchimp'
+        );
+
+        $querySettings = $this->objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings');
+        $querySettings->setStoragePageIds([$config['persistence']['storagePid']]);
+        $this->setDefaultQuerySettings($querySettings);
     }
 
     /**
