@@ -2,6 +2,7 @@
 namespace Tev\TevMailchimp\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use Tev\TevMailchimp\Domain\Model\Mlist;
 
 /**
@@ -9,6 +10,16 @@ use Tev\TevMailchimp\Domain\Model\Mlist;
  */
 class MlistRepository extends Repository
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function initializeObject()
+    {
+        $this->defaultOrderings = [
+            'name' => QueryInterface::ORDER_ASCENDING
+        ];
+    }
+
     /**
      * Create or update an existing list with the given Mailchimp List ID from
      * Mailchimp.
