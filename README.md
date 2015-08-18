@@ -14,6 +14,8 @@
     * [Changing the Logfile Path](#changing-the-logfile-path)
 * [Usage](#usage)
     * [Downloading Lists](#downloading-lists)
+    * [Using the MailchimpService](#using-the-mailchimpservice)
+    * [Using the MlistRepository](#using-the-mlistrepository)
     * [Logging](#logging)
 * [License](#license)
 
