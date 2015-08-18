@@ -3,10 +3,10 @@
     <file source-language="en" datatype="plaintext" original="messages" product-name="tev_mailchimp" date="2015-08-03T00:00:00+01:00">
         <header/>
         <body>
-            <trans-unit id="tev_faqs.plugin.faqcategory.title">
+            <trans-unit id="tev_mailchimp.plugin.webhooks.title">
                 <source>Mailchimp Webhook Listener Plugin</source>
             </trans-unit>
-            <trans-unit id="tev_faqs.plugin.faqcategory.description">
+            <trans-unit id="tev_mailchimp.plugin.webhooks.description">
                 <source>Add this plugin to a page to allow it to listen to incoming webhooks from Mailchimp.</source>
             </trans-unit>
         </body>
