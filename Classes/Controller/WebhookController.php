@@ -32,15 +32,22 @@ class WebhookController extends ActionController
      */
     public function listenAction()
     {
-        try {
-            $this->hookService->process($this->webhookFactory->create($_REQUEST));
+        if (isset($_REQUEST['type'])) {
+            try {
+                $this->hookService->process($this->webhookFactory->create($_REQUEST));
 
-            return json_encode(['state' => 'success']);
-        } catch (Exception $e) {
-            $this->throwStatus(400, 'Bad Request', json_encode([
-                'state' => 'error',
-                'message' => $e->getMessage()
-            ]));
+                return json_encode(['state' => 'success']);
+            } catch (Exception $e) {
+                $this->throwStatus(400, 'Bad Request', json_encode([
+                    'state' => 'error',
+                    'message' => $e->getMessage()
+                ]));
+            }
+        } else {
+            return json_encode([
+                'state' => 'warning',
+                'message' => 'No webhook data supplied in request'
+            ]);
         }
     }
 }
