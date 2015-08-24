@@ -114,7 +114,7 @@ can do this by running the following Extbase CLI command in your TYPO3 installat
 directory (you'll need to create the `cli_lowlevel` BE User if you haven't already):
 
 ```
-$ ./cli_dispatch.phpsh extbase mailchimp:lists
+$ ./typo3/cli_dispatch.phpsh extbase mailchimp:lists
 ```
 
 Once this has been run, you'll be able to see all of the downloaded lists using
