@@ -133,17 +133,22 @@ classes.
 
 The service provides the following methods for managing subscriptions:
 
-**subscribeUserToList(FrontendUser $user, Mlist $list)**
+**subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false)**
 
-> Subscribe the given FE User to the given Mailchimp list.
+> Subscribe the given FE User to the given Mailchimp list. If confirm is true,
+> a confirmation email will be sent to the user from Mailchimp, and they will
+> not be added to the list immediately. This means that the local database won't
+> be updated syncronously, and you'll have to rely on a webhook.
 
 **unsubscribeUserFromList(FrontendUser $user, Mlist $list)**
 
 > Unsubscribe the given FE User from the given Mailchimp list.
 
-**subscribeToList($email, $list)**
+**subscribeToList($email, $list, $confirm = false)**
 
-> Subscribe the given email address to the given Mailchimp list.
+> Subscribe the given email address to the given Mailchimp list. If confirm is true,
+> a confirmation email will be sent to the user from Mailchimp, and they will
+> not be added to the list immediately.
 
 **unsubscribeFromList($email, $list)**
 
@@ -151,10 +156,6 @@ The service provides the following methods for managing subscriptions:
 
 Each of these methods will trigger an exception if there is a Mailchimp API error,
 so you should ensure you handle them appropriately.
-
-**Note:** None of these methods will update the local database. You'll need to
-configure [webhooks](#webhooks) to ensure the local database is updated once the user confirms
-their subscription change.
 
 ###Using the MlistRepository
 

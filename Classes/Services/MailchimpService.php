@@ -163,28 +163,39 @@ class MailchimpService
     /**
      * Subscribe the given user to the given list.
      *
-     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user User to subscribe to list
-     * @param  \Tev\TevMailchimp\Domain\Model\Mlist         $list List to subscribe user to
+     * If $confirm is false, then the local database will be updated
+     * immediately. If it's true, then the local database will not be updated.
+     *
+     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user    User to subscribe to list
+     * @param  \Tev\TevMailchimp\Domain\Model\Mlist         $list    List to subscribe user to
+     * @param  boolean                                      $confirm Whether or not to require confirmation from the user
      * @return void
      */
-    public function subscribeUserToList(FrontendUser $user, Mlist $list)
+    public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false)
     {
-        return $this->subscribeToList($this->getEmailFromUser($user), $list);
+        $this->subscribeToList($this->getEmailFromUser($user), $list, $confirm);
+
+        if (!$confirm) {
+            $list->addFeUser($user);
+            $this->mListRepo->update($list);
+            $this->pm->persistAll();
+        }
     }
 
     /**
      * Subscribe the given email address to the given list.
      *
-     * @param  string                               $email Email to subscribe to list
-     * @param  \Tev\TevMailchimp\Domain\Model\Mlist $list  List to subscribe email to
+     * @param  string                               $email   Email to subscribe to list
+     * @param  \Tev\TevMailchimp\Domain\Model\Mlist $list    List to subscribe email to
+     * @param  boolean                              $confirm Whether or not to require confirmation from the user
      * @return void
      */
-    public function subscribeToList($email, Mlist $list)
+    public function subscribeToList($email, Mlist $list, $confirm = false)
     {
         try {
             $this->mc->post("lists/{$list->getMcListId()}/members", [
                 'email_address' => $email,
-                'status' => 'subscribed'
+                'status' => $confirm ? 'pending' : 'subscribed'
             ]);
         } catch (Exception $e) {
             $this->logger->error('MC API exception during subscribeToList', [
@@ -207,7 +218,11 @@ class MailchimpService
      */
     public function unsubscribeUserFromList(FrontendUser $user, Mlist $list)
     {
-        return $this->unsubscribeFromList($this->getEmailFromUser($user), $list);
+        $this->unsubscribeFromList($this->getEmailFromUser($user), $list);
+
+        $list->removeFeUser($user);
+        $this->mListRepo->update($list);
+        $this->pm->persistAll();
     }
 
     /**
