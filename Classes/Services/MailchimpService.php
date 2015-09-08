@@ -35,10 +35,10 @@ class MailchimpService
     /**
      * User repository.
      *
-     * @var \Tev\TevUsers\Domain\Repository\UserGroupRepository
+     * @var \TYPO3\CMS\Extbase\Domain\Repository\FrontendUserRepository
      * @inject
      */
-    protected $usergroupRepository;
+    protected $userRepo;
 
     /**
      * User email field utility.
@@ -133,6 +133,8 @@ class MailchimpService
      */
     public function downloadSubscriptions(FrontendUser $user)
     {
+        $user = $this->castUser($user);
+
         $mcId = $this->getMailchimpId($this->getEmailFromUser($user));
 
         $subscribed = [];
@@ -173,6 +175,8 @@ class MailchimpService
      */
     public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false)
     {
+        $user = $this->castUser($user);
+
         $this->subscribeToList($this->getEmailFromUser($user), $list, $confirm);
 
         if (!$confirm) {
@@ -218,6 +222,8 @@ class MailchimpService
      */
     public function unsubscribeUserFromList(FrontendUser $user, Mlist $list)
     {
+        $user = $this->castUser($user);
+
         $this->unsubscribeFromList($this->getEmailFromUser($user), $list);
 
         $list->removeFeUser($user);
@@ -272,5 +278,20 @@ class MailchimpService
     private function getMailchimpId($email)
     {
         return md5(strtolower($email));
+    }
+
+    /**
+     * Cast a user that might be a child class to a base FE user.
+     *
+     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user
+     * @return \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+     */
+    private function castUser(FrontendUser $user)
+    {
+        if (get_class($user) !== 'TYPO3\CMS\Extbase\Domain\Model\FrontendUser') {
+            $user = $this->userRepo->findByUid($user->getUid());
+        }
+
+        return $user;
     }
 }
