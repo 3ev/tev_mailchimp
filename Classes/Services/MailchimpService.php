@@ -197,10 +197,25 @@ class MailchimpService
     public function subscribeToList($email, Mlist $list, $confirm = false)
     {
         try {
-            $this->mc->post("lists/{$list->getMcListId()}/members", [
-                'email_address' => $email,
-                'status' => $confirm ? 'pending' : 'subscribed'
-            ]);
+            $newStatus = $confirm ? 'pending' : 'subscribed';
+            $curStatus = $this->getSubscriptionStatus($email, $list);
+
+            if ($curStatus === null) {
+                $this->mc->post("lists/{$list->getMcListId()}/members", [
+                    'email_address' => $email,
+                    'status' => $newStatus
+                ]);
+            } elseif (
+                $curStatus === 'unsubscribed' ||
+                $curStatus === 'pending' ||
+                $curStatus === 'cleaned'
+            ) {
+                $mcId = $this->getMailchimpId($email);
+
+                $this->mc->patch("lists/{$list->getMcListId()}/members/{$mcId}", [
+                    'status' => $newStatus
+                ]);
+            }
         } catch (Exception $e) {
             $this->logger->error('MC API exception during subscribeToList', [
                 'message' => $e->getMessage(),
@@ -241,11 +256,19 @@ class MailchimpService
     public function unsubscribeFromList($email, Mlist $list)
     {
         try {
-            $mcId = $this->getMailchimpId($email);
+            $curStatus = $this->getSubscriptionStatus($email, $list);
 
-            $this->mc->patch("lists/{$list->getMcListId()}/members/{$mcId}", [
-                'status' => 'unsubscribed'
-            ]);
+            if (
+                $curStatus === 'subscribed' ||
+                $curStatus === 'pending' ||
+                $curStatus === 'cleaned'
+            ) {
+                $mcId = $this->getMailchimpId($email);
+
+                $this->mc->patch("lists/{$list->getMcListId()}/members/{$mcId}", [
+                    'status' => 'unsubscribed'
+                ]);
+            }
         } catch (Exception $e) {
             $this->logger->error('MC API exception during unsubscribeFromList', [
                 'message' => $e->getMessage(),
@@ -293,5 +316,29 @@ class MailchimpService
         }
 
         return $user;
+    }
+
+    /**
+     * Get the subscription status for the given email address and list.
+     *
+     * @param  string                               $email Email address
+     * @param  \Tev\TevMailchimp\Domain\Model\Mlist $list  List to check
+     * @return string|null                                 'subscribed', 'unsubscribed', 'pending', 'cleaned' or null if not subscribed at all
+     */
+    private function getSubscriptionStatus($email, Mlist $list)
+    {
+        try {
+            $mcId = $this->getMailchimpId($email);
+
+            $res = $this->mc->request("lists/{$list->getMcListId()}/members/$mcId");
+
+            if (isset($res['id'])) {
+                return $res['status'];
+            } else {
+                return null;
+            }
+        } catch (Exception $e) {
+            return null;
+        }
     }
 }
