@@ -91,7 +91,7 @@ class MlistRepository extends Repository
     {
         $q = $this->createQuery();
 
-        $q->matching($q->in('feUsers.uid', [$user->getUid()]));
+        $q->matching($q->contains('feUsers', [$user->getUid()]));
 
         return $q->execute();
     }
@@ -106,7 +106,7 @@ class MlistRepository extends Repository
     {
         $q = $this->createQuery();
 
-        $q->matching($q->logicalNot($q->in('feUsers.uid', [$user->getUid()])));
+        $q->matching($q->logicalNot($q->contains('feUsers', [$user->getUid()])));
 
         return $q->execute();
     }
