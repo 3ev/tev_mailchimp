@@ -52,7 +52,7 @@ class MlistRepository extends Repository
      */
     public function addOrUpdateFromMailchimp($mcListId, array $data)
     {
-        if (!($list = $this->findOneByMcListId($mcListId))) {
+        if (!($list = $this->findHiddenOneByMcListId($mcListId))) {
             $list = new Mlist();
             $list->setMcListId($mcListId);
             $list->setMcCreatedAt($data['mc_created_at']);
@@ -109,5 +109,20 @@ class MlistRepository extends Repository
         $q->matching($q->logicalNot($q->contains('feUsers', [$user->getUid()])));
 
         return $q->execute();
+    }
+
+    /**
+     * Find list item by my_list_id even if it is hidden.
+     *
+     * @param  string                                               $mcListId
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     */
+    public function findHiddenOneByMcListId($mcListId)
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setIgnoreEnableFields(true);
+        $query->matching($query->equals('mc_list_id', $mcListId));
+
+        return $query->execute()->getFirst();
     }
 }
