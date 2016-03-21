@@ -31,8 +31,8 @@ The following functionality is included:
 database
 * BE save hooks to ensure that whenever a user is created or updated in the backend
 their List subscription preferences are downloaded from Mailchimp
-* Extbase slots to ensure that whever a user is created or updated on the frontend
-their List subscription preferences are downloaded from Mailchimp
+* <del>Extbase slots to ensure that whever a user is created or updated on the frontend
+their List subscription preferences are downloaded from Mailchimp</del> *Extbase slots are no longer included out of the box due to them being very hard to work with*
 * Webhook listeners to ensure that whenever a user's List subscription preferences
 are updated in Mailchimp they are updated in the local database
 * Services to easily trigger Mailchimp subscribe or unsubscribe requests anywhere
@@ -153,6 +153,16 @@ The service provides the following methods for managing subscriptions:
 **unsubscribeFromList($email, $list)**
 
 > Unsubscribe the given email address from the given Mailchimp list.
+
+**downloadSubscriptions(FrontendUser $user, $newUser = false)**
+
+> Download a user's current subscriptions from Mailchimp to TYPO3. You may want to call this the first time a user
+> registers on your site, or when they change their email address. Setting `$newUser` to true will slightly improve
+> performance when downloading subscriptions for a new user
+
+**downloadLists()**
+
+> Download all lists from Mailchimp to TYPO3.
 
 Each of these methods will trigger an exception if there is a Mailchimp API error,
 so you should ensure you handle them appropriately.

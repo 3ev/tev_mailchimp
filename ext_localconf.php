@@ -18,10 +18,6 @@ if (!defined ('TYPO3_MODE')) {
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Tev\\TevMailchimp\\Command\\MailchimpCommandController';
 
-// Register signal listeners
-
-\Tev\Typo3Utils\Slots\EntityRegistrar::register('Tev\TevMailchimp\Slots\FeUserSlot');
-
 // Configure the webhook plugin
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
