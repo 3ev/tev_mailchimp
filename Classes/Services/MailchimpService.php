@@ -3,7 +3,7 @@ namespace Tev\TevMailchimp\Services;
 
 use Exception;
 use Carbon\Carbon;
-use Mailchimp\Mailchimp as MailchimpApi;
+use Tev\TevMailchimp\MailchimpApi;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\Domain\Repository\FrontendUserRepository;
@@ -20,7 +20,7 @@ class MailchimpService
     /**
      * Mailchimp API client.
      *
-     * @var \Mailchimp\Mailchimp
+     * @var \Tev\TevMailchimp\MailchimpApi
      */
     protected $mc;
 
@@ -96,20 +96,18 @@ class MailchimpService
     public function downloadLists()
     {
         try {
-            $lists = $this->mc->request('lists', [
-                'fields' => 'lists.id,lists.name,lists.date_created'
-            ]);
+            $lists = $this->mc->getLists();
 
             $saved = [];
 
-            $lists->each(function ($list) use (&$saved) {
-                $this->mListRepo->addOrUpdateFromMailchimp($list->id, [
-                    'name' => $list->name,
-                    'mc_created_at' => Carbon::parse($list->date_created)->timestamp
+            foreach ($lists as $list) {
+                $this->mListRepo->addOrUpdateFromMailchimp($list['id'], [
+                    'name' => $list['name'],
+                    'mc_created_at' => Carbon::parse($list['date_created'])->timestamp
                 ]);
 
-                $saved[] = $list->id;
-            });
+                $saved[] = $list['id'];
+            };
 
             $this->mListRepo->deleteAllNotInList($saved);
 
@@ -141,7 +139,7 @@ class MailchimpService
 
         foreach ($this->mListRepo->findAll() as $list) {
             try {
-                $res = $this->mc->request("lists/{$list->getMcListId()}/members/$mcId");
+                $res = $this->mc->getMember($list->getMcListId(), $mcId);
 
                 if (isset($res['id']) && ($res['status'] === 'subscribed')) {
                     $list->addFeUser($user);
@@ -201,18 +199,15 @@ class MailchimpService
             $curStatus = $this->getSubscriptionStatus($email, $list);
 
             if ($curStatus === null) {
-                $this->mc->post("lists/{$list->getMcListId()}/members", [
+                $this->mc->addMember($list->getMcListId(), [
                     'email_address' => $email,
                     'status' => $newStatus
                 ]);
-            } elseif (
-                $curStatus === 'unsubscribed' ||
-                $curStatus === 'pending' ||
-                $curStatus === 'cleaned'
+            } elseif ($curStatus === 'unsubscribed'
+                || $curStatus === 'pending'
+                || $curStatus === 'cleaned'
             ) {
-                $mcId = $this->getMailchimpId($email);
-
-                $this->mc->patch("lists/{$list->getMcListId()}/members/{$mcId}", [
+                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), [
                     'status' => $newStatus
                 ]);
             }
@@ -258,14 +253,11 @@ class MailchimpService
         try {
             $curStatus = $this->getSubscriptionStatus($email, $list);
 
-            if (
-                $curStatus === 'subscribed' ||
-                $curStatus === 'pending' ||
-                $curStatus === 'cleaned'
+            if ($curStatus === 'subscribed'
+                || $curStatus === 'pending'
+                || $curStatus === 'cleaned'
             ) {
-                $mcId = $this->getMailchimpId($email);
-
-                $this->mc->patch("lists/{$list->getMcListId()}/members/{$mcId}", [
+                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), [
                     'status' => 'unsubscribed'
                 ]);
             }
@@ -328,9 +320,7 @@ class MailchimpService
     private function getSubscriptionStatus($email, Mlist $list)
     {
         try {
-            $mcId = $this->getMailchimpId($email);
-
-            $res = $this->mc->request("lists/{$list->getMcListId()}/members/$mcId");
+            $res = $this->mc->getMember($list->getMcListId(), $this->getMailchimpId($email));
 
             if (isset($res['id'])) {
                 return $res['status'];
