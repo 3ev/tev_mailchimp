@@ -27,10 +27,10 @@ class FeUserHook extends EntityHook
 
         if (isset($fields['disable'])) {
             if (!$fields['disable']) {
-                $this->downloadSubscriptions($uid);
+                $this->downloadSubscriptions($uid, true);
             }
         } else {
-            $this->downloadSubscriptions($uid);
+            $this->downloadSubscriptions($uid, true);
         }
     }
 
@@ -41,15 +41,13 @@ class FeUserHook extends EntityHook
     {
         $emailUtil = $this->om->get('Tev\\TevMailchimp\\Utility\\EmailField');
 
-        // User has been enabled, so download their newsletters
-
         if (isset($dirty['disable']) && !$dirty['disable']) {
+            // User has been enabled, so download their newsletters
+
             $this->downloadSubscriptions($uid);
-        }
+        } elseif (isset($dirty[$emailUtil->getFieldName()])) {
+            // Email address has changed, so download subscriptions
 
-        // Email address has changed, so download subscriptions
-
-        elseif (isset($dirty[$emailUtil->getFieldName()])) {
             $this->downloadSubscriptions($uid);
         }
     }

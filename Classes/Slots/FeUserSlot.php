@@ -43,7 +43,7 @@ class FeUserSlot extends EntitySlot
      */
     protected function created(FrontendUser $user)
     {
-        $this->mailchimp->downloadSubscriptions($user);
+        $this->mailchimp->downloadSubscriptions($user, true);
     }
 
     /**

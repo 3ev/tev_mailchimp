@@ -126,36 +126,56 @@ class MailchimpService
     /**
      * Download the lists the user is subscribed to.
      *
-     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user User to get subscriptions for
-     * @return array                                              All lists the user is subscribed to
+     * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user    User to get subscriptions for
+     * @param  boolean                                      $newUser Optional. If true, this method will do less work on the database
+     * @return array                                                 All lists the user is subscribed to
      */
-    public function downloadSubscriptions(FrontendUser $user)
+    public function downloadSubscriptions(FrontendUser $user, $newUser = false)
     {
         $user = $this->castUser($user);
 
         $mcId = $this->getMailchimpId($this->getEmailFromUser($user));
 
         $subscribed = [];
+        $anyListUpdated = false;
 
         foreach ($this->mListRepo->findAll() as $list) {
+            $thisListUpdated = false;
+
             try {
                 $res = $this->mc->getMember($list->getMcListId(), $mcId);
 
                 if (isset($res['id']) && ($res['status'] === 'subscribed')) {
                     $list->addFeUser($user);
                     $subscribed[] = $list;
+                    $thisListUpdated = true;
                 } else {
-                    $list->removeFeUser($user);
+                    if (!$newUser) {
+                        $list->removeFeUser($user);
+                        $thisListUpdated = true;
+                    }
                 }
             } catch (Exception $e) {
                 // Assuming the response is a 404
-                $list->removeFeUser($user);
+                if (!$newUser) {
+                    $list->removeFeUser($user);
+                    $thisListUpdated = true;
+                }
             }
 
-            $this->mListRepo->update($list);
+            // If we've made any changes to list, mark it for update
+
+            if ($thisListUpdated) {
+                $this->mListRepo->update($list);
+                $anyListUpdated = true;
+            }
         }
 
-        $this->pm->persistAll();
+        // If we've made any changes to any list, persist the changes to the database
+
+        if ($anyListUpdated) {
+            $this->pm->persistAll();
+        }
 
         return $subscribed;
     }
