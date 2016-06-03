@@ -30,6 +30,8 @@ module.tx_tevmailchimp < plugin.tx_tevmailchimp
 
 tev_mailchimp_webhook_json = PAGE
 tev_mailchimp_webhook_json {
+    typeNum = 0
+
     config {
         disableAllHeaderCode = 1
         additionalHeaders = Content-type:application/json
