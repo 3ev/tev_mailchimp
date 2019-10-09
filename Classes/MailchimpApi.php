@@ -39,7 +39,8 @@ class MailchimpApi
     public function getLists()
     {
         return $this->request('get', 'lists', [
-            'fields' => 'lists.id,lists.name,lists.date_created'
+            'fields' => 'lists.id,lists.name,lists.date_created',
+            'count' => 50
         ])['lists'];
     }
 
