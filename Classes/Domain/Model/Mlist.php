@@ -47,6 +47,13 @@ class Mlist extends AbstractEntity
     protected $feUsers;
 
     /**
+     * The sorting order.
+     *
+     * @var int
+     */
+    protected $sorting;
+
+    /**
      * Constructor.
      *
      * @return void
@@ -181,5 +188,26 @@ class Mlist extends AbstractEntity
     public function setFeUsers(ObjectStorage $feUsers)
     {
         $this->feUsers = $feUsers;
+    }
+
+    /**
+     * Return the sorting order.
+     *
+     * @return int
+     */
+    public function getSorting()
+    {
+        return $this->sorting;
+    }
+
+    /**
+     * Set the sorting order.
+     *
+     * @param  int $sorting
+     * @return void
+     */
+    public function setSorting($sorting)
+    {
+        $this->sorting = $sorting;
     }
 }

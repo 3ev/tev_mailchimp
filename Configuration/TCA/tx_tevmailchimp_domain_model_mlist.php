@@ -25,6 +25,7 @@ return [
                 hidden,
                 name,
                 description,
+                sorting,
                 --div--;Subscribers,
                 fe_users,
                 --div--;Mailchimp Config,
@@ -89,6 +90,15 @@ return [
                 'maxitems' => 9999,
                 'foreign_table' => 'fe_users',
                 'MM' => 'tx_tevmailchimp_domain_model_mlist_fe_user_mm'
+            ]
+        ],
+        'sorting' => [
+            'exclude' => 1,
+            'label' => 'LLL:EXT:tev_mailchimp/Resources/Private/Language/locallang_tca.xml:tx_tevmailchimp_domain_model_mlist.sorting',
+            'config' => [
+                'type' => 'input',
+                'size' => '30',
+                'eval' => 'trim,int'
             ]
         ]
     ]
