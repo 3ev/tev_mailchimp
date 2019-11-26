@@ -93,6 +93,8 @@ class MlistRepository extends Repository
 
         $q->matching($q->contains('feUsers', [$user->getUid()]));
 
+        $q->setOrderings(['sorting' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING]);
+
         return $q->execute();
     }
 
@@ -107,6 +109,8 @@ class MlistRepository extends Repository
         $q = $this->createQuery();
 
         $q->matching($q->logicalNot($q->contains('feUsers', [$user->getUid()])));
+
+        $q->setOrderings(['sorting' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING]);
 
         return $q->execute();
     }

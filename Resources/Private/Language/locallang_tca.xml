@@ -13,6 +13,7 @@
             <label index="tx_tevmailchimp_domain_model_mlist.mc_list_id">Mailchimp List ID</label>
             <label index="tx_tevmailchimp_domain_model_mlist.mc_created_at">Time created in Mailchimp</label>
             <label index="tx_tevmailchimp_domain_model_mlist.fe_users">Subscribers</label>
+            <label index="tx_tevmailchimp_domain_model_mlist.sorting">Sorting Order</label>
         </languageKey>
     </data>
 </T3locallang>
