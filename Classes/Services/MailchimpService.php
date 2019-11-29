@@ -189,13 +189,19 @@ class MailchimpService
      * @param  \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user    User to subscribe to list
      * @param  \Tev\TevMailchimp\Domain\Model\Mlist         $list    List to subscribe user to
      * @param  boolean                                      $confirm Whether or not to require confirmation from the user
-     * @return void
+     * @param  array                                        $dataOverrides
+     * @throws Exception
      */
-    public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false)
+    public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false, $dataOverrides = [])
     {
         $user = $this->castUser($user);
 
-        $this->subscribeToList($this->getEmailFromUser($user), $list, $confirm);
+        $this->subscribeToList(
+            $this->getEmailFromUser($user),
+            $list,
+            $confirm,
+            $dataOverrides
+        );
 
         if (!$confirm) {
             $list->addFeUser($user);
@@ -210,26 +216,32 @@ class MailchimpService
      * @param  string                               $email   Email to subscribe to list
      * @param  \Tev\TevMailchimp\Domain\Model\Mlist $list    List to subscribe email to
      * @param  boolean                              $confirm Whether or not to require confirmation from the user
-     * @return void
+     * @param  array                                $dataOverrides
+     *
+     * @throws Exception
      */
-    public function subscribeToList($email, Mlist $list, $confirm = false)
+    public function subscribeToList($email, Mlist $list, $confirm = false, $dataOverrides = [])
     {
         try {
             $newStatus = $confirm ? 'pending' : 'subscribed';
             $curStatus = $this->getSubscriptionStatus($email, $list);
 
             if ($curStatus === null) {
-                $this->mc->addMember($list->getMcListId(), [
+                $base = [
                     'email_address' => $email,
                     'status' => $newStatus
-                ]);
+                ];
+                $detailsArr = array_merge($base, $dataOverrides);
+                $this->mc->addMember($list->getMcListId(), $detailsArr);
             } elseif ($curStatus === 'unsubscribed'
                 || $curStatus === 'pending'
                 || $curStatus === 'cleaned'
             ) {
-                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), [
+                $base = [
                     'status' => $newStatus
-                ]);
+                ];
+                $detailsArr = array_merge($base, $dataOverrides);
+                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), $detailsArr);
             }
         } catch (Exception $e) {
             $this->logger->error('MC API exception during subscribeToList', [
