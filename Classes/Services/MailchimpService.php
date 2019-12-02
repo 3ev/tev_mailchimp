@@ -98,7 +98,7 @@ class MailchimpService
         try {
             $lists = $this->mc->getLists();
 
-            $saved = [];
+            $saved = array();
 
             foreach ($lists as $list) {
                 $this->mListRepo->addOrUpdateFromMailchimp($list['id'], [
@@ -115,9 +115,9 @@ class MailchimpService
 
             return $this->mListRepo->findAll()->toArray();
         } catch (Exception $e) {
-            $this->logger->error('MC API exception during downloadLists', [
+            $this->logger->error('MC API exception during downloadLists', array(
                 'message' => $e->getMessage()
-            ]);
+            ));
 
             throw $e;
         }
@@ -192,7 +192,7 @@ class MailchimpService
      * @param  array                                        $dataOverrides
      * @throws Exception
      */
-    public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false, $dataOverrides = [])
+    public function subscribeUserToList(FrontendUser $user, Mlist $list, $confirm = false, $dataOverrides = array())
     {
         $user = $this->castUser($user);
 
@@ -220,36 +220,36 @@ class MailchimpService
      *
      * @throws Exception
      */
-    public function subscribeToList($email, Mlist $list, $confirm = false, $dataOverrides = [])
+    public function subscribeToList($email, Mlist $list, $confirm = false, $dataOverrides = array())
     {
         try {
             $newStatus = $confirm ? 'pending' : 'subscribed';
             $curStatus = $this->getSubscriptionStatus($email, $list);
 
             if ($curStatus === null) {
-                $base = [
+                $base = array(
                     'email_address' => $email,
                     'status' => $newStatus
-                ];
+                );
                 $detailsArr = array_merge($base, $dataOverrides);
                 $this->mc->addMember($list->getMcListId(), $detailsArr);
             } elseif ($curStatus === 'unsubscribed'
                 || $curStatus === 'pending'
                 || $curStatus === 'cleaned'
             ) {
-                $base = [
+                $base = array(
                     'status' => $newStatus
-                ];
+                );
                 $detailsArr = array_merge($base, $dataOverrides);
                 $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), $detailsArr);
             }
         } catch (Exception $e) {
-            $this->logger->error('MC API exception during subscribeToList', [
+            $this->logger->error('MC API exception during subscribeToList', array(
                 'message' => $e->getMessage(),
                 'email' => $email,
                 'list_uid' => $list->getUid(),
                 'mc_list_id' => $list->getMcListId()
-            ]);
+            ));
 
             throw $e;
         }
@@ -289,17 +289,17 @@ class MailchimpService
                 || $curStatus === 'pending'
                 || $curStatus === 'cleaned'
             ) {
-                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), [
+                $this->mc->updateMember($list->getMcListId(), $this->getMailchimpId($email), array(
                     'status' => 'unsubscribed'
-                ]);
+                ));
             }
         } catch (Exception $e) {
-            $this->logger->error('MC API exception during unsubscribeFromList', [
+            $this->logger->error('MC API exception during unsubscribeFromList', array(
                 'message' => $e->getMessage(),
                 'email' => $email,
                 'list_uid' => $list->getUid(),
                 'mc_list_id' => $list->getMcListId()
-            ]);
+            ));
 
             throw $e;
         }
