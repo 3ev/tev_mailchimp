@@ -181,6 +181,18 @@ class MailchimpService
     }
 
     /**
+     * Download all lists the user is subscribed to.
+     *
+     * @return array                                                 All lists the user is subscribed to
+     */
+    public function downloadAllSubscriptions()
+    {
+        foreach ($this->userRepo->findAll() as $user) {
+            $this->downloadSubscriptions($user);
+        }
+    }
+
+    /**
      * Subscribe the given user to the given list.
      *
      * If $confirm is false, then the local database will be updated

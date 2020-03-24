@@ -63,4 +63,28 @@ class MailchimpCommandController extends CommandController
             ]);
         }
     }
+
+    /**
+     * Download all subscriptions from Mailchimp.
+     *
+     * @return void
+     */
+    public function subscriptionsCommand()
+    {
+        $this->outputLine('<info>Downloading subscriptions...</info>');
+
+        try {
+            $this->mailchimpService->downloadAllSubscriptions();
+
+            $this->outputLine('<info>complete</info>');
+
+            $this->logger->info('Subscriptions downloaded successfully via CLI');
+        } catch (Exception $e) {
+            $this->outputLine("<error>Error: {$e->getMessage()}</error>");
+
+            $this->logger->error('Subscriptions failed to download via CLI', [
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
