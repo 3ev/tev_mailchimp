@@ -116,7 +116,7 @@ class MlistRepository extends Repository
     }
 
     /**
-     * Find list item by my_list_id even if it is hidden.
+     * Find list item by mc_list_id even if it is hidden.
      *
      * @param  string                                               $mcListId
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
@@ -125,6 +125,21 @@ class MlistRepository extends Repository
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setIgnoreEnableFields(true);
+        $query->matching($query->equals('mc_list_id', $mcListId));
+
+        return $query->execute()->getFirst();
+    }
+
+    /**
+     * Find a list item by mc_list_id
+     *
+     * @param string $mcListId
+     *
+     * @return mixed
+     */
+    public function findByMcListId($mcListId)
+    {
+        $query = $this->createQuery();
         $query->matching($query->equals('mc_list_id', $mcListId));
 
         return $query->execute()->getFirst();
